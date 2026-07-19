@@ -118,18 +118,11 @@ ui/             # frontend: vanilla JS + CSS, i18n, demo-mode mock backend
 4. **Exclusive access** — `O_EXCL` (Linux) / `FSCTL_LOCK_VOLUME` (Windows) / `unmountDisk force` (macOS) before a single byte is written.
 5. **Mandatory verify** — the report shows both hashes; they must match or the job fails loudly.
 
-## Enabling CI (one-time)
+## Releases
 
-The GitHub Actions workflows live in [`ci-workflows/`](ci-workflows) because the deployment
-bot can't push workflow files. To activate CI + automated releases, move them once via the
-GitHub web UI or a local clone:
-
-```bash
-mkdir -p .github/workflows && git mv ci-workflows/*.yml .github/workflows/ && git commit -m "Enable CI" && git push
-```
-
-After that, pushing a tag like `v0.1.0` auto-builds the Windows installer, macOS dmg,
-.deb and AppImage as a draft release.
+Pushing a tag like `v0.1.0` triggers the [release workflow](.github/workflows/release.yml),
+which builds the Windows installer, macOS universal dmg, .deb and AppImage, and attaches
+them to a draft GitHub release for review before publishing.
 
 ## Contributing
 

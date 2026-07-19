@@ -16,6 +16,12 @@ pub struct SpeedMeter {
     smoothed_bps: f64,
 }
 
+impl Default for SpeedMeter {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl SpeedMeter {
     pub fn new() -> Self {
         Self { last_t: Instant::now(), last_bytes: 0, smoothed_bps: 0.0 }

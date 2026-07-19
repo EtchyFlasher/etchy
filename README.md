@@ -6,7 +6,7 @@
 
 *Every byte written. Every byte checked. Every step visible.*
 
-[![CI](https://img.shields.io/badge/CI-GitHub_Actions-2088FF?logo=githubactions&logoColor=white)](.github/workflows/ci.yml)
+[![CI](https://github.com/EtchyFlasher/etchy/actions/workflows/ci.yml/badge.svg)](https://github.com/EtchyFlasher/etchy/actions/workflows/ci.yml)
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](LICENSE)
 [![Rust](https://img.shields.io/badge/core-Rust-orange?logo=rust)](etchy-core)
 [![Tauri](https://img.shields.io/badge/GUI-Tauri_2-24C8DB?logo=tauri&logoColor=white)](https://tauri.app)
@@ -30,20 +30,16 @@ Most flashing tools have two problems: **you don't know if the write actually su
 | 💾 **Persistence (optional)** | One checkbox adds a `casper-rw` / `persistence` partition for Ubuntu/Debian live USBs (Linux host only). |
 | 🌍 **Themes & languages** | Dark/light theme, English/Español/Deutsch/Français out of the box — translations welcome! |
 
-## Screenshot
-
-> Dark, techy, glowing. Run the UI demo (below) to see it live.
-
 ## Install
 
 Grab the latest build from **[Releases](../../releases)**:
 
 | Platform | Package |
 |---|---|
-| Debian/Ubuntu | `etchy_x.y.z_amd64.deb` — `sudo apt install ./etchy_*.deb` |
-| Any Linux | `etchy_x.y.z_amd64.AppImage` — `chmod +x` and run |
-| Windows 10/11 | `etchy_x.y.z_x64-setup.exe` |
-| macOS | `Etchy_x.y.z_universal.dmg` |
+| Debian/Ubuntu | `Etchy_x.y.z_amd64.deb` — `sudo apt install ./Etchy_*.deb` |
+| Any Linux | `Etchy_x.y.z_amd64.AppImage` — `chmod +x` and run |
+| Windows 10/11 | `Etchy_x.y.z_x64-setup.exe` |
+| macOS | `Etchy_x.y.z_universal.dmg` (Apple Silicon + Intel) |
 
 ## How it works
 

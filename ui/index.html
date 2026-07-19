@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Etchy</title>
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="bg-grid" aria-hidden="true"></div>
+
+  <header id="titlebar">
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+        <path d="M7 2h7l3 3v6h-2V6.4L13.6 4H9v7H7V2zm-2 11h14a1 1 0 0 1 1 1v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-6a1 1 0 0 1 1-1zm3 3v3h2v-3H8zm5 0v3h2v-3h-2z" fill="currentColor"/>
+      </svg>
+      <span class="brand-name">Etchy</span>
+      <span class="brand-tag" data-i18n="tagline">verified ISO → USB</span>
+    </div>
+    <div class="titlebar-actions">
+      <select id="lang-select" title="Language" aria-label="Language">
+        <option value="en">EN</option>
+        <option value="es">ES</option>
+        <option value="de">DE</option>
+        <option value="fr">FR</option>
+      </select>
+      <button id="theme-toggle" class="icon-btn" title="Toggle theme" aria-label="Toggle theme">
+        <svg class="icon-moon" viewBox="0 0 24 24" width="16" height="16"><path d="M12 3a9 9 0 1 0 9 9 7 7 0 0 1-9-9z" fill="currentColor"/></svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" width="16" height="16"><path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zm0-5v3m0 12v3M2 12h3m14 0h3M4.9 4.9l2.1 2.1m10 10 2.1 2.1m0-14.2-2.1 2.1m-10 10-2.1 2.1" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Step indicator -->
+  <nav id="stepper" aria-label="Progress">
+    <div class="step active" data-step="1"><span class="dot">1</span><span class="lbl" data-i18n="step_iso">Image</span></div>
+    <div class="bar"></div>
+    <div class="step" data-step="2"><span class="dot">2</span><span class="lbl" data-i18n="step_drive">Drive</span></div>
+    <div class="bar"></div>
+    <div class="step" data-step="3"><span class="dot">3</span><span class="lbl" data-i18n="step_flash">Flash</span></div>
+  </nav>
+
+  <main id="wizard">
+
+    <!-- ═══════════ STEP 1: SELECT ISO ═══════════ -->
+    <section class="panel" id="panel-1">
+      <div id="dropzone" tabindex="0" role="button" aria-label="Select ISO image">
+        <svg viewBox="0 0 24 24" width="48" height="48" class="dz-icon"><path d="M12 3a9 9 0 1 0 9 9 9 9 0 0 0-9-9zm0 12a3 3 0 1 1 3-3 3 3 0 0 1-3 3zm0-4a1 1 0 1 0 1 1 1 1 0 0 0-1-1z" fill="currentColor"/></svg>
+        <h2 data-i18n="drop_title">Drop your ISO here</h2>
+        <p data-i18n="drop_sub">or click to browse</p>
+      </div>
+
+      <div id="iso-card" class="file-card hidden">
+        <div class="fc-icon">💿</div>
+        <div class="fc-body">
+          <div class="fc-name" id="iso-name">—</div>
+          <div class="fc-meta"><span id="iso-size">—</span> · <span id="iso-hash-status" data-i18n="hashing">computing SHA-256…</span></div>
+          <div class="fc-hash mono" id="iso-hash"></div>
+        </div>
+        <button class="icon-btn" id="iso-clear" title="Remove" aria-label="Remove ISO">✕</button>
+      </div>
+
+      <details id="checksum-box" class="hidden">
+        <summary data-i18n="checksum_title">Validate against official checksum (recommended)</summary>
+        <div class="checksum-row">
+          <input type="text" id="expected-hash" class="mono" spellcheck="false"
+                 placeholder="paste the official SHA-256 here…" data-i18n-ph="checksum_ph" />
+          <span id="checksum-verdict"></span>
+        </div>
+      </details>
+
+      <div class="panel-actions">
+        <span></span>
+        <button class="btn primary" id="to-step-2" disabled data-i18n="next_drive">Choose drive →</button>
+      </div>
+    </section>
+
+    <!-- ═══════════ STEP 2: SELECT DRIVE ═══════════ -->
+    <section class="panel hidden" id="panel-2">
+      <div class="panel-head">
+        <h2 data-i18n="drives_title">Select target drive</h2>
+        <button class="btn ghost small" id="refresh-drives">⟳ <span data-i18n="refresh">Refresh</span></button>
+      </div>
+      <p class="hint" data-i18n="drives_hint">Only removable USB drives are shown. System disks are never listed.</p>
+
+      <div id="drive-list" role="listbox" aria-label="USB drives"></div>
+      <div id="no-drives" class="empty-state hidden">
+        <span class="pulse-dot"></span>
+        <span data-i18n="no_drives">No USB drives detected — plug one in, it will appear automatically.</span>
+      </div>
+
+      <div id="confirm-box" class="hidden">
+        <label class="danger-label" for="confirm-input">
+          <span data-i18n="confirm_label">⚠ This drive will be completely erased. Type the drive model to confirm:</span>
+          <b id="confirm-target" class="mono"></b>
+        </label>
+        <input type="text" id="confirm-input" class="mono" autocomplete="off" spellcheck="false" />
+      </div>
+
+      <div class="options-row">
+        <label class="check">
+          <input type="checkbox" id="opt-badblocks" />
+          <span data-i18n="opt_badblocks">Check drive for bad blocks &amp; fake capacity first (slower)</span>
+        </label>
+        <label class="check">
+          <input type="checkbox" id="opt-persistence" />
+          <span data-i18n="opt_persistence">Add persistence partition (Linux live USBs)</span>
+        </label>
+        <div id="persistence-opts" class="sub-opts hidden">
+          <label><span data-i18n="p_label">Label:</span>
+            <select id="persist-label">
+              <option value="casper-rw">casper-rw (Ubuntu &amp; friends)</option>
+              <option value="persistence">persistence (Debian)</option>
+            </select>
+          </label>
+          <label><span data-i18n="p_size">Size:</span>
+            <select id="persist-size">
+              <option value="0" data-i18n="p_all">All remaining space</option>
+              <option value="1073741824">1 GB</option>
+              <option value="4294967296">4 GB</option>
+              <option value="8589934592">8 GB</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div class="panel-actions">
+        <button class="btn ghost" id="back-to-1" data-i18n="back">← Back</button>
+        <button class="btn danger" id="start-flash" disabled data-i18n="flash_btn">⚡ Flash it</button>
+      </div>
+    </section>
+
+    <!-- ═══════════ STEP 3: FLASHING ═══════════ -->
+    <section class="panel hidden" id="panel-3">
+      <div class="flash-layout">
+        <div class="ring-wrap">
+          <svg id="ring" viewBox="0 0 200 200" width="220" height="220">
+            <circle class="ring-bg" cx="100" cy="100" r="88" />
+            <circle class="ring-glow" cx="100" cy="100" r="88" id="ring-glow" />
+            <circle class="ring-fg" cx="100" cy="100" r="88" id="ring-fg" />
+          </svg>
+          <div class="ring-center">
+            <div id="ring-pct" class="ring-pct">0<span>%</span></div>
+            <div id="ring-phase" class="ring-phase" data-i18n="ph_write">writing</div>
+          </div>
+        </div>
+
+        <div class="flash-stats">
+          <div class="stat"><span class="stat-label" data-i18n="st_speed">Speed</span><span class="stat-val mono" id="stat-speed">—</span></div>
+          <div class="stat"><span class="stat-label" data-i18n="st_eta">ETA</span><span class="stat-val mono" id="stat-eta">—</span></div>
+          <div class="stat"><span class="stat-label" data-i18n="st_written">Data</span><span class="stat-val mono" id="stat-bytes">—</span></div>
+          <canvas id="speed-graph" width="360" height="90" aria-label="Write speed graph"></canvas>
+          <div class="phase-track" id="phase-track"></div>
+        </div>
+      </div>
+
+      <div class="panel-actions">
+        <button class="btn ghost" id="cancel-flash" data-i18n="cancel">Cancel</button>
+        <span></span>
+      </div>
+    </section>
+
+    <!-- ═══════════ RESULT ═══════════ -->
+    <section class="panel hidden" id="panel-done">
+      <div class="result" id="result-ok">
+        <div class="result-icon ok">✓</div>
+        <h2 data-i18n="done_title">Flash verified!</h2>
+        <p data-i18n="done_sub">Every byte on the drive matches the source image.</p>
+        <div class="report mono" id="report-details"></div>
+        <button class="btn primary" id="flash-another" data-i18n="again">Flash another</button>
+      </div>
+      <div class="result hidden" id="result-err">
+        <div class="result-icon err">✕</div>
+        <h2 data-i18n="fail_title">Something went wrong</h2>
+        <p class="mono" id="error-message"></p>
+        <button class="btn primary" id="try-again" data-i18n="retry">Try again</button>
+      </div>
+    </section>
+  </main>
+
+  <footer id="statusbar">
+    <span id="mode-badge" class="hidden">DEMO MODE — no real device access</span>
+    <span class="spacer"></span>
+    <span>Etchy v0.1.0 · GPL-3.0</span>
+  </footer>
+
+  <script src="i18n/strings.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

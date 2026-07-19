@@ -40,7 +40,7 @@
     "longDescription": "Etchy flashes ISO images to USB drives with mandatory read-back verification, live speed graphs, fake-drive detection and optional Linux persistence.",
     "linux": {
       "deb": {
-        "depends": ["policykit-1"]
+        "depends": ["pkexec | policykit-1"]
       }
     }
   }

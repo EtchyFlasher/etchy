@@ -33,7 +33,7 @@
       "icons/icon.icns",
       "icons/icon.ico"
     ],
-    "externalBin": [],
+    "externalBin": ["binaries/etchy-helper"],
     "resources": [],
     "category": "Utility",
     "shortDescription": "Verified ISO → USB flasher",

@@ -384,7 +384,14 @@ function resetToStart() {
 // ───────────────────────── wiring ─────────────────────────
 function init() {
   applyI18n();
-  if (backend.demo) $("#mode-badge").classList.remove("hidden");
+  if (backend.demo) {
+    $("#mode-badge").classList.remove("hidden");
+    // If we're inside a Tauri window but the API is missing, something is
+    // misconfigured — warn hard instead of silently pretending.
+    if (navigator.userAgent.includes("Tauri") || window.__TAURI_INTERNALS__) {
+      $("#mode-badge").textContent = "⚠ BACKEND UNAVAILABLE — running as demo. Reinstall or report this bug!";
+    }
+  }
 
   // theme
   const savedTheme = localStorage.getItem("etchy-theme") || "dark";

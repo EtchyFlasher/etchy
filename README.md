@@ -80,7 +80,7 @@ cargo install tauri-cli --version "^2" --locked
 **Build & run:**
 
 ```bash
-git clone https://github.com/YOUR_USER/etchy && cd etchy
+git clone https://github.com/EtchyFlasher/etchy && cd etchy
 cargo build --release -p etchy-helper     # the privileged worker
 cargo tauri dev                            # run the app (dev)
 cargo tauri build                          # produce .deb / .AppImage / installer
@@ -117,6 +117,19 @@ ui/             # frontend: vanilla JS + CSS, i18n, demo-mode mock backend
 3. **Type-to-confirm** — the flash button stays locked until you type the target drive's model name.
 4. **Exclusive access** — `O_EXCL` (Linux) / `FSCTL_LOCK_VOLUME` (Windows) / `unmountDisk force` (macOS) before a single byte is written.
 5. **Mandatory verify** — the report shows both hashes; they must match or the job fails loudly.
+
+## Enabling CI (one-time)
+
+The GitHub Actions workflows live in [`ci-workflows/`](ci-workflows) because the deployment
+bot can't push workflow files. To activate CI + automated releases, move them once via the
+GitHub web UI or a local clone:
+
+```bash
+mkdir -p .github/workflows && git mv ci-workflows/*.yml .github/workflows/ && git commit -m "Enable CI" && git push
+```
+
+After that, pushing a tag like `v0.1.0` auto-builds the Windows installer, macOS dmg,
+.deb and AppImage as a draft release.
 
 ## Contributing
 
